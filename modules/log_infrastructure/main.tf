@@ -26,7 +26,7 @@ module "destination" {
 
   for_each = { for bucket in var.buckets_list : bucket.name => bucket }
 
-  project_id     = var.project_id
+  project_id     = "projects/${var.project_id}"
   name           = each.value.name
   location       = each.value.location
   retention_days = try(each.value.retention_days, null)
