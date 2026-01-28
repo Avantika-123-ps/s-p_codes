@@ -8,15 +8,14 @@ resource "random_string" "suffix" {
 
 module "destination" {
   source   = "terraform-google-modules/log-export/google//modules/logbucket"
-  version  = "~> 7.0" # Proactively adding version constraint
+  version  = "~> 7.0"
 
   for_each = { for bucket in var.buckets_list : bucket.name => bucket }
 
-  project_id               = var.project_id
-  name                     = each.value.name
-  location                 = each.value.location
-  retention_days           = try(each.value.retention_days, null)
-  log_sink_writer_identity = try(module.log_export[each.key].writer_identity, null)
+  project_id     = var.project_id
+  name           = each.value.name
+  location       = each.value.location
+  retention_days = try(each.value.retention_days, null)
 }
 
 module "log_export" {
@@ -31,4 +30,12 @@ module "log_export" {
   parent_resource_id   = try(each.value.parent_resource_id, var.project_id)
   parent_resource_type = try(each.value.parent_resource_type, "project")
   include_children     = true
+}
+
+resource "google_storage_bucket_iam_member" "sink_writer" {
+  for_each = { for bucket in var.buckets_list : bucket.name => bucket if try(each.value.log_sink_name, "") != "" }
+
+  bucket = module.destination[each.key].name
+  role   = "roles/storage.objectCreator"
+  member = module.log_export[each.key].writer_identity
 }
