@@ -19,6 +19,7 @@ module "log_export" {
   parent_resource_id   = try(each.value.parent_resource_id, var.project_id)
   parent_resource_type = try(each.value.parent_resource_type, "project")
   include_children     = true
+  unique_writer_identity = true
 }
 
 resource "google_logging_project_bucket_config" "destination" {
