@@ -14,7 +14,7 @@ resource "google_logging_project_sink" "log_export" {
   filter                 = try(each.value.filter, "")
   
   # Ensure project includes projects/ prefix and enable unique identity
-  project        = var.project_id
+  project = coalesce(each.value.parent_resource_id, var.project_id)
   
   unique_writer_identity = true
 }
@@ -23,7 +23,7 @@ resource "google_logging_project_bucket_config" "destination" {
   for_each = { for bucket in var.buckets_list : bucket.name => bucket }
 
   # Prepend projects/ to avoid 404, ignore changes to avoid inconsistent plan
-  project        = coalesce(each.value.parent_resource_id, var.project_id)
+  project        = var.project_id
   location       = each.value.location
   bucket_id      = each.value.name
   retention_days = try(each.value.retention_days, null)
@@ -35,8 +35,7 @@ resource "google_logging_project_bucket_config" "destination" {
 
 resource "google_project_iam_member" "log_writer" {
   for_each = google_logging_project_sink.log_export
-
-  project        = coalesce(each.value.parent_resource_id, var.project_id)
+  project        = var.project_id
   role    = "roles/logging.bucketWriter"
   member  = coalesce(each.value.writer_identity, "serviceAccount:cloud-logs@system.gserviceaccount.com")
 }
