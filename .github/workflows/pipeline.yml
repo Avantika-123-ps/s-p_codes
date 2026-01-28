@@ -10,6 +10,9 @@ jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     
     defaults:
       run:
@@ -19,18 +22,27 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/128759819528/locations/global/workloadIdentityPools/github-actions-pool-test/providers/github-provider'
+        service_account: 'workloadpool@my-first-project-484105.iam.gserviceaccount.com'
+        token_format: 'access_token'
+        create_credentials_file: true
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.5.0
 
-
+   
 
     - name: Terraform Init & Plan (NonProd)
       if: github.ref == 'refs/heads/dev'
       run: |
         cd envs/nonprod
-        # Note: Set GOOGLE_CREDENTIALS secret
+        # Note: Set GOOGLE_CREDENTIALS secret or rely on WIF
          terraform init
          terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
          terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
