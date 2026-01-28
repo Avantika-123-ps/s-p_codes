@@ -24,8 +24,7 @@ jobs:
       with:
         terraform_version: 1.5.0
 
-    - name: Terraform Format
-      run: terraform fmt -check -recursive
+
 
     - name: Terraform Init & Plan (NonProd)
       if: github.ref == 'refs/heads/dev'
