@@ -12,7 +12,8 @@ module "log_export" {
 
   for_each = { for bucket in var.buckets_list : bucket.name => bucket if try(bucket.log_sink_name, "") != "" }
 
-  destination_uri      = module.destination[each.key].destination_uri
+  # Construct the destination URI manually since we are using the raw resource
+  destination_uri      = "logging.googleapis.com/${google_logging_project_bucket_config.destination[each.key].name}"
   filter               = try(each.value.filter, "")
   log_sink_name        = "${each.value.log_sink_name}_${random_string.suffix[each.key].result}"
   parent_resource_id   = try(each.value.parent_resource_id, var.project_id)
@@ -20,20 +21,18 @@ module "log_export" {
   include_children     = true
 }
 
-module "destination" {
-  source   = "terraform-google-modules/log-export/google//modules/logbucket"
-  version  = "~> 7.0"
-
+resource "google_logging_project_bucket_config" "destination" {
   for_each = { for bucket in var.buckets_list : bucket.name => bucket }
 
-  project_id     = "projects/${var.project_id}"
-  name           = each.value.name
+  # Prepend projects/ to avoid 404, ignore changes to avoid inconsistent plan
+  project        = "projects/${var.project_id}"
   location       = each.value.location
+  bucket_id      = each.value.name
   retention_days = try(each.value.retention_days, null)
 
-  # Break circular dependency: Provide dummy identity and disable internal permission grant
-  log_sink_writer_identity      = "serviceAccount:dummy-break-cycle@${var.project_id}.iam.gserviceaccount.com"
-  grant_write_permission_on_bkt = false
+  lifecycle {
+    ignore_changes = [project]
+  }
 }
 
 resource "google_project_iam_member" "log_writer" {
