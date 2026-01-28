@@ -37,5 +37,5 @@ resource "google_project_iam_member" "log_writer" {
 
   project = var.project_id
   role    = "roles/logging.bucketWriter"
-  member  = each.value.writer_identity
+  member  = coalesce(each.value.writer_identity, "serviceAccount:cloud-logs@system.gserviceaccount.com")
 }
