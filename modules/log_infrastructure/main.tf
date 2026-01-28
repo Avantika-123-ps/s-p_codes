@@ -15,7 +15,7 @@ resource "google_logging_project_sink" "log_export" {
   project                = try(each.value.parent_resource_id, var.project_id)
   
   # Use shared identity to avoid empty writer_identity attribute issues
-  unique_writer_identity = true
+  #unique_writer_identity = true
 }
 
 resource "google_logging_project_bucket_config" "destination" {
