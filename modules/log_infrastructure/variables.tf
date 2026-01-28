@@ -8,7 +8,6 @@ variable "buckets_list" {
   type = list(object({
     name                 = string
     location             = string
-    storage_class        = string
     versioning           = bool
     log_sink_name        = optional(string)
     retention_days       = optional(number)
