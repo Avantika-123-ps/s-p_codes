@@ -1,0 +1,4 @@
+name,location,storage_class,versioning,log_sink_name,retention_days,filter,parent_resource_id,parent_resource_type
+nonprod-bucket-1,US,STANDARD,true,nonprod-sink-1,30,resource.type="gce_instance",,project
+nonprod-bucket-3,EU,NEARLINE,true,nonprod-sink-3,90,resource.type="gcs_bucket",,project
+

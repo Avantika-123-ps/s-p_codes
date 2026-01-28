@@ -1,0 +1,45 @@
+name: Terraform CI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Init & Plan (NonProd)
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        cd envs/nonprod
+        # Note: Set GOOGLE_CREDENTIALS secret
+        # terraform init
+        # terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+        # terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+
+    - name: Terraform Init & Plan (Prod)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd envs/prod
+        # terraform init
+        # terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+        # terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
