@@ -10,7 +10,7 @@ module "log_export" {
   source   = "terraform-google-modules/log-export/google"
   version  = "~> 7.0"
 
-  for_each = { for bucket in var.buckets_list : bucket.name => bucket if try(each.value.log_sink_name, "") != "" }
+  for_each = { for bucket in var.buckets_list : bucket.name => bucket if try(bucket.log_sink_name, "") != "" }
 
   destination_uri      = module.destination[each.key].destination_uri
   filter               = try(each.value.filter, "")
@@ -29,10 +29,14 @@ module "destination" {
   project_id     = var.project_id
   name           = each.value.name
   location       = each.value.location
-  log_sink_writer_identity = "${module.log_export[each.key].writer_identity}"
+  # log_sink_writer_identity removed to avoid cycle
   retention_days = try(each.value.retention_days, null)
 }
 
+resource "google_storage_bucket_iam_member" "log_writer" {
+  for_each = module.log_export
 
-
-
+  bucket = each.key
+  role   = "roles/storage.objectCreator"
+  member = each.value.writer_identity
+}

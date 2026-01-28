@@ -28,11 +28,7 @@ terraform {
     }
   }
 
-  backend "gcs" {
-    bucket = "YOUR_STATE_BUCKET_NAME" # Update this with actual state bucket
-    prefix = "terraform/state/prod"
-  }
-}
+
 
 provider "google" {
   project = var.project_id
