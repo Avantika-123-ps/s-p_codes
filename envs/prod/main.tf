@@ -10,7 +10,6 @@ module "log_infrastructure" {
   buckets_list = [for b in local.buckets_data : {
     name          = b.name
     location      = b.location
-    storage_class = b.storage_class
     versioning    = tobool(b.versioning)
     log_sink_name = try(b.log_sink_name, null)
   }]

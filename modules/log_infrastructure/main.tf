@@ -15,10 +15,8 @@ module "destination" {
   project_id               = var.project_id
   name                     = each.value.name
   location                 = each.value.location
-  storage_class            = each.value.storage_class
   retention_days           = try(each.value.retention_days, null)
   log_sink_writer_identity = try(module.log_export[each.key].writer_identity, null)
-  force_destroy            = false
 }
 
 module "log_export" {
