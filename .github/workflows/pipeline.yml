@@ -45,13 +45,13 @@ jobs:
         cd envs/nonprod
         # Note: Set GOOGLE_CREDENTIALS secret or rely on WIF
          terraform init
-         terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
-         terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+         terraform plan 
+         terraform apply -auto-approve 
 
     - name: Terraform Init & Plan (Prod)
       if: github.ref == 'refs/heads/main'
       run: |
         cd envs/prod
         # terraform init
-        # terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
-        # terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+        # terraform plan 
+        # terraform apply -auto-approve 
