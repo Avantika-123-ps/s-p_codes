@@ -15,6 +15,7 @@ module "destination" {
   project_id     = var.project_id
   name           = each.value.name
   location       = each.value.location
+  log_sink_writer_identity = "${module.log_export[each.key].writer_identity}"
   retention_days = try(each.value.retention_days, null)
 }
 
@@ -32,10 +33,4 @@ module "log_export" {
   include_children     = true
 }
 
-resource "google_storage_bucket_iam_member" "sink_writer" {
-  for_each = { for bucket in var.buckets_list : bucket.name => bucket if try(each.value.log_sink_name, "") != "" }
 
-  bucket = module.destination[each.key].name
-  role   = "roles/storage.objectCreator"
-  member = module.log_export[each.key].writer_identity
-}
