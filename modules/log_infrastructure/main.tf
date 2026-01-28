@@ -12,10 +12,10 @@ resource "google_logging_project_sink" "log_export" {
   name                   = "${each.value.log_sink_name}_${random_string.suffix[each.key].result}"
   destination            = "logging.googleapis.com/${google_logging_project_bucket_config.destination[each.key].name}"
   filter                 = try(each.value.filter, "")
-  project                = try(each.value.parent_resource_id, var.project_id)
   
-  # Use shared identity to avoid empty writer_identity attribute issues
-  #unique_writer_identity = true
+  # Ensure project includes projects/ prefix and enable unique identity
+  project                = "projects/${try(each.value.parent_resource_id, var.project_id)}"
+  unique_writer_identity = true
 }
 
 resource "google_logging_project_bucket_config" "destination" {
@@ -37,8 +37,5 @@ resource "google_project_iam_member" "log_writer" {
 
   project = var.project_id
   role    = "roles/logging.bucketWriter"
-  
-  # writer_identity already includes "serviceAccount:" 
-  # e.g., "serviceAccount:p12345...@gcp-sa-logging.iam.gserviceaccount.com"
   member  = each.value.writer_identity
 }
