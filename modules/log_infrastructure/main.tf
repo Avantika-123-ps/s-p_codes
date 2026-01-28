@@ -6,19 +6,6 @@ resource "random_string" "suffix" {
   special = false
 }
 
-module "destination" {
-  source   = "terraform-google-modules/log-export/google//modules/logbucket"
-  version  = "~> 7.0"
-
-  for_each = { for bucket in var.buckets_list : bucket.name => bucket }
-
-  project_id     = var.project_id
-  name           = each.value.name
-  location       = each.value.location
-  log_sink_writer_identity = "${module.log_export[each.key].writer_identity}"
-  retention_days = try(each.value.retention_days, null)
-}
-
 module "log_export" {
   source   = "terraform-google-modules/log-export/google"
   version  = "~> 7.0"
@@ -32,5 +19,20 @@ module "log_export" {
   parent_resource_type = try(each.value.parent_resource_type, "project")
   include_children     = true
 }
+
+module "destination" {
+  source   = "terraform-google-modules/log-export/google//modules/logbucket"
+  version  = "~> 7.0"
+
+  for_each = { for bucket in var.buckets_list : bucket.name => bucket }
+
+  project_id     = var.project_id
+  name           = each.value.name
+  location       = each.value.location
+  log_sink_writer_identity = "${module.log_export[each.key].writer_identity}"
+  retention_days = try(each.value.retention_days, null)
+}
+
+
 
 
