@@ -29,14 +29,17 @@ module "destination" {
   project_id     = var.project_id
   name           = each.value.name
   location       = each.value.location
-  # log_sink_writer_identity removed to avoid cycle
   retention_days = try(each.value.retention_days, null)
+
+  # Break circular dependency: Provide dummy identity and disable internal permission grant
+  log_sink_writer_identity      = "serviceAccount:dummy-break-cycle@${var.project_id}.iam.gserviceaccount.com"
+  grant_write_permission_on_bkt = false
 }
 
-resource "google_storage_bucket_iam_member" "log_writer" {
+resource "google_project_iam_member" "log_writer" {
   for_each = module.log_export
 
-  bucket = each.key
-  role   = "roles/storage.objectCreator"
-  member = each.value.writer_identity
+  project = var.project_id
+  role    = "roles/logging.bucketWriter"
+  member  = each.value.writer_identity
 }
