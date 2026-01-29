@@ -52,6 +52,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: |
         cd envs/prod
-        # terraform init
-        # terraform plan 
-        # terraform apply -auto-approve 
+        # Note: Set GOOGLE_CREDENTIALS secret or rely on WIF
+         terraform init
+         terraform plan 
+         terraform apply -auto-approve 
