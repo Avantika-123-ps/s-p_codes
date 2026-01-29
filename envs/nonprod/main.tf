@@ -5,7 +5,7 @@ locals {
 module "log_infrastructure" {
   source = "../../modules/log_infrastructure"
 
-  project_id = try(b.parent_resource_id, null)
+  parent_resource_id   = var.project_id
 
   buckets_list = [for b in local.buckets_data : {
     name                 = b.name
@@ -14,7 +14,7 @@ module "log_infrastructure" {
     log_sink_name        = try(b.log_sink_name, null)
     retention_days       = try(tonumber(b.retention_days), null)
     filter               = try(b.filter, null)
-    parent_resource_id   = var.project_id
+    project_id = try(b.parent_resource_id, null)
     parent_resource_type = try(b.parent_resource_type, null)
   }]
 }
