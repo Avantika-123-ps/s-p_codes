@@ -1,5 +1,5 @@
 name,location,versioning,log_sink_name,retention_days,filter,parent_resource_id,parent_resource_type
-nonprod-bucket-7,us-central1,true,nonprod-sink-7,30,"resource.type=""gce_instance""",central-obs-2ee479ae,project
-nonprod-bucket-8,europe-west1,true,nonprod-sink-8,90,"resource.type=""gcs_bucket""",central-obs-2ee479ae,project
+test-nonprod-bucket-1,us-central1,true,test-nonprod-sink-1,30,"resource.type=""gce_instance""",central-obs-2ee479ae,project
+test-nonprod-bucket-2,europe-west1,true,test-nonprod-sink-2,90,"resource.type=""gcs_bucket""",central-obs-2ee479ae,project
 
 
