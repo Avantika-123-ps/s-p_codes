@@ -1,5 +1,5 @@
 name,location,versioning,log_sink_name,retention_days,filter,parent_resource_id,parent_resource_type,group_id
-bucket_access_test_1,us-central1,true,test-nonprod-sink-1,30,"resource.type=""gce_instance""",project-b-2ee479ae,"group:group_a@avantikapandey.altostrat.com"
-bucket_access_test_2,europe-west1,true,test-nonprod-sink-2,90,"resource.type=""gcs_bucket""",project-b-2ee479ae,"group:group_b@avantikapandey.altostrat.com"
+bucket_access_test_1,us-central1,true,test-nonprod-sink-1,30,"resource.type=""gce_instance""",project-b-2ee479ae,,"group:group_a@avantikapandey.altostrat.com"
+bucket_access_test_2,europe-west1,true,test-nonprod-sink-2,90,"resource.type=""gcs_bucket""",project-b-2ee479ae,,"group:group_b@avantikapandey.altostrat.com"
 
 
