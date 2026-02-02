@@ -53,6 +53,6 @@ resource "google_project_iam_member" "log_view_accessor" {
   condition {
     title       = "Specific Log Bucket View Access"
     description = "Grants access to the default view of the specific log bucket"
-    expression  = "resource.name == 'projects/${var.project_id}/locations/${each.value.location}/buckets/${each.value.name}/views/_AllLogs'"
+    expression  = "resource.name : 'projects/${var.project_id}/locations/${each.value.location}/buckets/${each.value.name}/views/_AllLogs'"
   }
 }
