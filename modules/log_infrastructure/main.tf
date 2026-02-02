@@ -42,8 +42,16 @@ resource "google_project_iam_member" "log_writer" {
 
 resource "google_project_iam_member" "log_view_accessor" {
   for_each = {
-    for bucket in var.buckets_list : bucket.name => bucket
-    if try(bucket.group, "") != ""
+    for bg in flatten([
+      for bucket in var.buckets_list : [
+        for group in bucket.groups : {
+          name     = bucket.name
+          location = bucket.location
+          group    = group
+          key      = "${bucket.name}-${group}"
+        }
+      ]
+    ]) : bg.key => bg
   }
 
   project = var.project_id
