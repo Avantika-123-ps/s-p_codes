@@ -14,5 +14,6 @@ variable "buckets_list" {
     filter               = optional(string)
     parent_resource_id   = optional(string)
     parent_resource_type = optional(string)
+    group                = optional(string)
   }))
 }

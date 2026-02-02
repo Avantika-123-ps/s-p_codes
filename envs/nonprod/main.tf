@@ -16,6 +16,7 @@ module "log_infrastructure" {
     filter               = try(b.filter, null)
     parent_resource_id = try(b.parent_resource_id, null)
     parent_resource_type = try(b.parent_resource_type, null)
+    group                = try(b.group_id, null)
   }]
 }
 

@@ -39,3 +39,20 @@ resource "google_project_iam_member" "log_writer" {
   role    = "roles/logging.bucketWriter"
   member  = coalesce(each.value.writer_identity, "serviceAccount:cloud-logs@system.gserviceaccount.com")
 }
+
+resource "google_project_iam_member" "log_view_accessor" {
+  for_each = {
+    for bucket in var.buckets_list : bucket.name => bucket
+    if try(bucket.group, "") != ""
+  }
+
+  project = var.project_id
+  role    = "roles/logging.viewAccessor"
+  member  = each.value.group
+
+  condition {
+    title       = "Specific Log Bucket View Access"
+    description = "Grants access to the default view of the specific log bucket"
+    expression  = "resource.name == 'projects/${var.project_id}/locations/${each.value.location}/buckets/${each.value.name}/views/_Default'"
+  }
+}
