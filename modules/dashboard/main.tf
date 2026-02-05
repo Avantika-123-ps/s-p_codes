@@ -1,6 +1,5 @@
 resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
   project      = var.project_id
-  display_name = "Top 10 VM Resource Usage (Linux & Windows)"
 
   # The dashboard definition in JSON format.
   dashboard_json = jsonencode({
