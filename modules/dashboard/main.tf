@@ -16,7 +16,7 @@ resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
               "dataSets" : [
                 {
                   "timeSeriesQuery" : {
-                    "mqlQuery" : join("\n", [
+                    "timeSeriesQueryLanguage" : join("\n", [
                       "fetch gce_instance",
                       "| metric 'compute.googleapis.com/instance/cpu/utilization'",
                       "# Uncomment and adjust the filter below if instances have 'os:linux' labels:",
@@ -42,7 +42,7 @@ resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
               "dataSets" : [
                 {
                   "timeSeriesQuery" : {
-                    "mqlQuery" : join("\n", [
+                    "timeSeriesQueryLanguage" : join("\n", [
                       "fetch gce_instance",
                       "| metric 'compute.googleapis.com/instance/cpu/utilization'",
                       "# Uncomment and adjust the filter below if instances have 'os:windows' labels:",
@@ -69,7 +69,7 @@ resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
               "dataSets" : [
                 {
                   "timeSeriesQuery" : {
-                    "mqlQuery" : join("\n", [
+                    "timeSeriesQueryLanguage" : join("\n", [
                       "fetch gce_instance",
                       "| metric 'agent.googleapis.com/memory/percent_used'",
                       "| filter (metric.state == 'used')",
@@ -96,7 +96,7 @@ resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
               "dataSets" : [
                 {
                   "timeSeriesQuery" : {
-                    "mqlQuery" : join("\n", [
+                    "timeSeriesQueryLanguage" : join("\n", [
                       "fetch gce_instance",
                       "| metric 'agent.googleapis.com/memory/percent_used'",
                       "| filter (metric.state == 'used')",
@@ -124,7 +124,7 @@ resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
               "dataSets" : [
                 {
                   "timeSeriesQuery" : {
-                    "mqlQuery" : join("\n", [
+                    "timeSeriesQueryLanguage" : join("\n", [
                       "fetch gce_instance",
                       "| metric 'agent.googleapis.com/disk/percent_used'",
                       "| filter (metric.state == 'used')",
@@ -151,7 +151,7 @@ resource "google_monitoring_dashboard" "my_top_vms_dashboard" {
               "dataSets" : [
                 {
                   "timeSeriesQuery" : {
-                    "mqlQuery" : join("\n", [
+                    "timeSeriesQueryLanguage" : join("\n", [
                       "fetch gce_instance",
                       "| metric 'agent.googleapis.com/disk/percent_used'",
                       "| filter (metric.state == 'used')",
