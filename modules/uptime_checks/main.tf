@@ -75,7 +75,7 @@ resource "google_monitoring_alert_policy" "uptime_alerts" {
   conditions {
     display_name = "Uptime Check failed for ${each.value.display_name}"
     condition_threshold {
-      filter          = format("metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" AND metric.labels.check_id=\"%s\"", each.value.uptime_check_id)
+      filter          = format("resource.type=\"uptime_url\" AND metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" AND metric.labels.check_id=\"%s\"", each.value.uptime_check_id)
       duration        = "300s"
       comparison      = "COMPARISON_GT"
       threshold_value = 1
