@@ -32,3 +32,8 @@ module "uptime_checks" {
   csv_path       = "${path.module}/uptime_checks.csv"
   moogsoft_token = "dummy-token-for-testing" # In practice, this should come from a secret manager
 }
+
+module "my_monitoring_dashboard" {
+  source = "../../modules/dashboard"
+  project_id = var.project_id
+}
