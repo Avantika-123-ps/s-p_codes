@@ -19,10 +19,7 @@ resource "google_monitoring_notification_channel" "moogsoft_webhook" {
   display_name = "Moogsoft Webhook"
   type         = "webhook_tokenauth"
   labels = {
-    url = var.moogsoft_url
-  }
-  sensitive_labels {
-    auth_token = var.moogsoft_token
+    url = "${var.moogsoft_url}?token=${var.moogsoft_token}"
   }
 }
 
