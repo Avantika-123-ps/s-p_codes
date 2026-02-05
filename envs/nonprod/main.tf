@@ -24,3 +24,11 @@ variable "project_id" {
   description = "The project ID to deploy to."
   type        = string
 }
+
+module "uptime_checks" {
+  source = "../../modules/uptime_checks"
+
+  project_id     = var.project_id
+  csv_path       = "${path.module}/uptime_checks.csv"
+  moogsoft_token = "dummy-token-for-testing" # In practice, this should come from a secret manager
+}
