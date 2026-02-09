@@ -1,4 +1,4 @@
 name,type,host,path,port,timeout,period,content_match,content_matcher,regions,request_method,acceptable_response_code,log_check_failures,notifications,alert_condition
-google-http,HTTP,www.google.com,/,80,10s,60s,google,CONTAINS_STRING,"USA,EUROPE",GET,200,true,moogsoft,300s
-google-https,HTTPS,www.google.com,/,443,10s,60s,google,CONTAINS_STRING,GLOBAL,POST,201,false,,600s
+google-http,HTTP,www.google.com,/,80,10s,60s,google,CONTAINS_STRING,"Europe",GET,200,true,moogsoft,300s
+google-https,HTTPS,www.google.com,/,443,10s,60s,google,CONTAINS_STRING,"United States Iowa",POST,201,false,,600s
 db-tcp,TCP,10.0.0.5,,5432,10s,60s,,,,,,,moogsoft,120s
