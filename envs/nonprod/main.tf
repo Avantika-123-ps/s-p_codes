@@ -37,3 +37,11 @@ module "my_monitoring_dashboard" {
   source = "../../modules/dashboard"
   project_id = var.project_id
 }
+
+module "alert_policies" {
+  source = "../../modules/alert_policies"
+
+  project_id     = var.project_id
+  csv_path       = "${path.module}/alert_policies.csv"
+  moogsoft_token = "dummy-token-for-testing-alerts" # Replace in real usage
+}
