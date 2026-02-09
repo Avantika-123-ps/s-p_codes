@@ -23,15 +23,15 @@ module "uptime_checks" {
 ```
 
 ## CSV Configuration Standard
-The module strictly requires the CSV file to contain the headers below:
-`name,type,host,path,port,timeout,period,content_match,content_matcher`
+The module strictly requires the CSV file to contain the following headers:
+`name,type,host,path,port,timeout,period,content_match,content_matcher,regions,request_method,acceptable_response_code,log_check_failures,notifications,alert_condition`
 
 ### Example Rows:
 ```csv
-name,type,host,path,port,timeout,period,content_match,content_matcher
-google-http,HTTP,www.google.com,/,80,10s,60s,google,CONTAINS_STRING
-api-https,HTTPS,api.example.com,/health,443,10s,60s,,
-db-tcp,TCP,10.0.0.5,,5432,10s,60s,,
+name,type,host,path,port,timeout,period,content_match,content_matcher,regions,request_method,acceptable_response_code,log_check_failures,notifications,alert_condition
+google-http,HTTP,www.google.com,/,80,10s,60s,google,CONTAINS_STRING,"United States Iowa",GET,200,true,moogsoft,300s
+api-https,HTTPS,api.example.com,/health,443,10s,60s,,,"Europe",POST,201,false,,600s
+db-tcp,TCP,10.0.0.5,,5432,10s,60s,,,,,,,moogsoft,120s
 ```
 
 ### Field Definitions:
@@ -44,6 +44,12 @@ db-tcp,TCP,10.0.0.5,,5432,10s,60s,,
 - **period**: How frequently to perform the check (default: `60s`).
 - **content_match**: (Optional) Target string to look for in the body.
 - **content_matcher**: Used with `content_match` (default: `CONTAINS_STRING`)
+- **regions**: (Optional) A single location name (e.g. `Europe`, `United States Iowa`) or comma-separated GCP regions. Mapped to 3 backend regions automatically.
+- **request_method**: HTTP method (e.g., `GET`, `POST`).
+- **acceptable_response_code**: Target expected HTTP status code (e.g., `200`, `201`).
+- **log_check_failures**: Boolean (`true`/`false`) dictating if failures should be logged.
+- **notifications**: Comma-separated list of notification channels (e.g., `moogsoft`).
+- **alert_condition**: Duration threshold string for the alert policy condition (e.g., `300s`).
 
 ## Notification Channels / Filtering
 * **Token Query Params:** The module formats your provided `moogsoft_token` into the query string of your webhook `moogsoft_url` automatically to comply with strict GCP API requirements for the `webhook_tokenauth` channel type.
