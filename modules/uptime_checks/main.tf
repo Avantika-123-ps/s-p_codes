@@ -11,6 +11,12 @@ locals {
     period          = try(c.period, "") != "" ? c.period : "60s"
     content_match   = try(c.content_match, "") != "" ? c.content_match : ""
     content_matcher = try(c.content_matcher, "") != "" ? c.content_matcher : "CONTAINS_STRING"
+    regions         = try(c.regions, "") != "" && try(c.regions, "") != "GLOBAL" ? split(",", c.regions) : null
+    request_method  = try(c.request_method, "") != "" ? c.request_method : "GET"
+    acceptable_response_code = try(c.acceptable_response_code, "") != "" ? tonumber(c.acceptable_response_code) : null
+    log_check_failures       = try(c.log_check_failures, "") != "" ? tobool(c.log_check_failures) : false
+    notifications            = try(c.notifications, "") != "" ? split(",", c.notifications) : ["moogsoft"]
+    alert_condition          = try(c.alert_condition, "") != "" ? c.alert_condition : "300s"
   }]
 }
 
@@ -29,6 +35,8 @@ resource "google_monitoring_uptime_check_config" "bulk_checks" {
   display_name = each.value.name
   timeout      = each.value.timeout
   period       = each.value.period
+  selected_regions = each.value.regions
+  log_check_failures = each.value.log_check_failures
 
   monitored_resource {
     type = "uptime_url"
@@ -45,6 +53,14 @@ resource "google_monitoring_uptime_check_config" "bulk_checks" {
       port         = each.value.port
       use_ssl      = each.value.type == "HTTPS"
       validate_ssl = each.value.type == "HTTPS"
+      request_method = each.value.request_method
+      
+      dynamic "accepted_response_status_codes" {
+        for_each = each.value.acceptable_response_code != null ? [1] : []
+        content {
+          status_value = each.value.acceptable_response_code
+        }
+      }
     }
   }
 
@@ -70,13 +86,15 @@ resource "google_monitoring_alert_policy" "uptime_alerts" {
   display_name = "Uptime Failure - ${each.value.display_name}"
   combiner     = "OR"
 
-  notification_channels = [google_monitoring_notification_channel.moogsoft_webhook.name]
+  # We could dynamically fetch channels depending on notifications list, but for our simple 
+  # logic, we'll map "moogsoft" to our created webhook.
+  notification_channels = contains(local.uptime_checks[index([for c in local.uptime_checks : c.name], each.value.display_name)].notifications, "moogsoft") ? [google_monitoring_notification_channel.moogsoft_webhook.name] : []
 
   conditions {
     display_name = "Uptime Check failed for ${each.value.display_name}"
     condition_threshold {
       filter          = format("resource.type=\"uptime_url\" AND metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" AND metric.labels.check_id=\"%s\"", each.value.uptime_check_id)
-      duration        = "300s"
+      duration        = local.uptime_checks[index([for c in local.uptime_checks : c.name], each.value.display_name)].alert_condition
       comparison      = "COMPARISON_GT"
       threshold_value = 1
 
