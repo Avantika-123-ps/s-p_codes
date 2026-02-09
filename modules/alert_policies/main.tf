@@ -21,7 +21,7 @@ resource "google_monitoring_notification_channel" "moogsoft_webhook" {
   display_name = "Moogsoft Webhook Alert Policies"
   type         = "webhook_tokenauth"
   labels = {
-    url = "$${var.moogsoft_url}?token=$${var.moogsoft_token}"
+    url = "${var.moogsoft_url}?token=${var.moogsoft_token}"
   }
 }
 
@@ -35,7 +35,7 @@ resource "google_monitoring_alert_policy" "policies" {
   notification_channels = contains(each.value.notifications, "moogsoft") ? [google_monitoring_notification_channel.moogsoft_webhook.name] : []
 
   conditions {
-    display_name = "$${each.value.type} usage policy for $${each.value.name}"
+    display_name = "${each.value.type} usage policy for ${each.value.name}"
     
     condition_threshold {
       # Filter for CPU or File System usage. Defaults handle standard GCP metrics.
@@ -66,9 +66,9 @@ resource "google_monitoring_alert_policy" "policies" {
 
   documentation {
     content   = <<EOT
-Alert Triggered: $$$${policy.display_name}
-Threshold Crossed: $$$${condition.threshold_value}
-Duration: $$$${condition.duration}
+Alert Triggered: $${policy.display_name}
+Threshold Crossed: $${condition.threshold_value}
+Duration: $${condition.duration}
 Severity: High
 EOT
     mime_type = "text/markdown"
