@@ -40,7 +40,7 @@ db-tcp,TCP,10.0.0.5,,5432,10s,60s,,
 - **host**: The hostname or IP to check against.
 - **path**: (HTTP/HTTPS only) Target path (default: `/`).
 - **port**: Target port. (Defaults to 80 for HTTP, 443 for HTTPS if left explicitly blank).
-- **timeout**: Max wait time (default: `10s`).
+- **timeout**: Max wait time (default: `10s`)
 - **period**: How frequently to perform the check (default: `60s`).
 - **content_match**: (Optional) Target string to look for in the body.
 - **content_matcher**: Used with `content_match` (default: `CONTAINS_STRING`).
