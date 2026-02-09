@@ -11,7 +11,8 @@ locals {
     period          = try(c.period, "") != "" ? c.period : "60s"
     content_match   = try(c.content_match, "") != "" ? c.content_match : ""
     content_matcher = try(c.content_matcher, "") != "" ? c.content_matcher : "CONTAINS_STRING"
-    regions         = try(c.regions, "") != "" && try(c.regions, "") != "GLOBAL" ? split(",", c.regions) : null
+    regions_raw     = trimspace(try(c.regions, ""))
+    regions         = local.uptime_checks_raw_mapped[index(local.uptime_checks_raw, c)].mapped_regions
     request_method  = try(c.request_method, "") != "" ? c.request_method : "GET"
     acceptable_response_code = try(c.acceptable_response_code, "") != "" ? tonumber(c.acceptable_response_code) : null
     log_check_failures       = try(c.log_check_failures, "") != "" ? tobool(c.log_check_failures) : false
@@ -120,4 +121,23 @@ Project: $${resource.labels.project_id}
 EOT
     mime_type = "text/markdown"
   }
+}
+locals {
+  region_map = {
+    "Europe"                 = ["EUROPE", "USA_OREGON", "USA_VIRGINIA"]
+    "United States Iowa"     = ["USA_IOWA", "USA_OREGON", "USA_VIRGINIA"]
+    "United States Oregon"   = ["USA_OREGON", "USA_VIRGINIA", "USA_IOWA"]
+    "United States Virginia" = ["USA_VIRGINIA", "USA_OREGON", "USA_IOWA"]
+    "Asia Pacific"           = ["ASIA_PACIFIC", "USA_OREGON", "USA_VIRGINIA"]
+    "South America"          = ["SOUTH_AMERICA", "USA_OREGON", "USA_VIRGINIA"]
+    "Global"                 = null
+    ""                       = null
+  }
+
+  uptime_checks_raw_mapped = [for c in local.uptime_checks_raw : {
+    mapped_regions = try(
+      local.region_map[trimspace(try(c.regions, ""))],
+      split(",", trimspace(c.regions))
+    )
+  }]
 }
