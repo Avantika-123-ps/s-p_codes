@@ -43,7 +43,7 @@ db-tcp,TCP,10.0.0.5,,5432,10s,60s,,
 - **timeout**: Max wait time (default: `10s`)
 - **period**: How frequently to perform the check (default: `60s`).
 - **content_match**: (Optional) Target string to look for in the body.
-- **content_matcher**: Used with `content_match` (default: `CONTAINS_STRING`).
+- **content_matcher**: Used with `content_match` (default: `CONTAINS_STRING`)
 
 ## Notification Channels / Filtering
 * **Token Query Params:** The module formats your provided `moogsoft_token` into the query string of your webhook `moogsoft_url` automatically to comply with strict GCP API requirements for the `webhook_tokenauth` channel type.
