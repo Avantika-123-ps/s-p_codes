@@ -54,6 +54,7 @@ resource "google_monitoring_uptime_check_config" "bulk_checks" {
       use_ssl      = each.value.type == "HTTPS"
       validate_ssl = each.value.type == "HTTPS"
       request_method = each.value.request_method
+      content_type   = each.value.request_method == "POST" ? "URL_ENCODED" : "TYPE_UNSPECIFIED"
       
       dynamic "accepted_response_status_codes" {
         for_each = each.value.acceptable_response_code != null ? [1] : []
