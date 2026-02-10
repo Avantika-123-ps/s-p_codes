@@ -2,18 +2,18 @@ locals {
   uptime_checks_raw = csvdecode(file(var.csv_path))
 
   uptime_checks = [for c in local.uptime_checks_raw : {
-    name            = c.name
-    type            = upper(c.type)
-    host            = c.host
-    path            = try(c.path, "") != "" ? c.path : "/"
-    port            = try(c.port, "") != "" ? tonumber(c.port) : (upper(c.type) == "HTTPS" ? 443 : 80)
-    timeout         = try(c.timeout, "") != "" ? c.timeout : "10s"
-    period          = try(c.period, "") != "" ? c.period : "60s"
-    content_match   = try(c.content_match, "") != "" ? c.content_match : ""
-    content_matcher = try(c.content_matcher, "") != "" ? c.content_matcher : "CONTAINS_STRING"
-    regions_raw     = trimspace(try(c.regions, ""))
-    regions         = local.uptime_checks_raw_mapped[index(local.uptime_checks_raw, c)].mapped_regions
-    request_method  = try(c.request_method, "") != "" ? c.request_method : "GET"
+    name                     = c.name
+    type                     = upper(c.type)
+    host                     = c.host
+    path                     = try(c.path, "") != "" ? c.path : "/"
+    port                     = try(c.port, "") != "" ? tonumber(c.port) : (upper(c.type) == "HTTPS" ? 443 : 80)
+    timeout                  = try(c.timeout, "") != "" ? c.timeout : "10s"
+    period                   = try(c.period, "") != "" ? c.period : "60s"
+    content_match            = try(c.content_match, "") != "" ? c.content_match : ""
+    content_matcher          = try(c.content_matcher, "") != "" ? c.content_matcher : "CONTAINS_STRING"
+    regions_raw              = trimspace(try(c.regions, ""))
+    regions                  = try(c.regions, "") != "" && tolower(trimspace(c.regions)) != "global" ? [trimspace(c.regions)] : null
+    request_method           = try(c.request_method, "") != "" ? c.request_method : "GET"
     acceptable_response_code = try(c.acceptable_response_code, "") != "" ? tonumber(c.acceptable_response_code) : null
     log_check_failures       = try(c.log_check_failures, "") != "" ? tobool(c.log_check_failures) : false
     notifications            = try(c.notifications, "") != "" ? split(",", c.notifications) : ["moogsoft"]
@@ -31,12 +31,12 @@ resource "google_monitoring_notification_channel" "moogsoft_webhook" {
 }
 
 resource "google_monitoring_uptime_check_config" "bulk_checks" {
-  for_each     = { for c in local.uptime_checks : c.name => c }
-  project      = var.project_id
-  display_name = each.value.name
-  timeout      = each.value.timeout
-  period       = each.value.period
-  selected_regions = each.value.regions
+  for_each           = { for c in local.uptime_checks : c.name => c }
+  project            = var.project_id
+  display_name       = each.value.name
+  timeout            = each.value.timeout
+  period             = each.value.period
+  selected_regions   = each.value.regions
   log_check_failures = each.value.log_check_failures
 
   monitored_resource {
@@ -50,13 +50,13 @@ resource "google_monitoring_uptime_check_config" "bulk_checks" {
   dynamic "http_check" {
     for_each = contains(["HTTP", "HTTPS"], each.value.type) ? [1] : []
     content {
-      path         = each.value.path
-      port         = each.value.port
-      use_ssl      = each.value.type == "HTTPS"
-      validate_ssl = each.value.type == "HTTPS"
+      path           = each.value.path
+      port           = each.value.port
+      use_ssl        = each.value.type == "HTTPS"
+      validate_ssl   = each.value.type == "HTTPS"
       request_method = each.value.request_method
       content_type   = each.value.request_method == "POST" ? "URL_ENCODED" : "TYPE_UNSPECIFIED"
-      
+
       dynamic "accepted_response_status_codes" {
         for_each = each.value.acceptable_response_code != null ? [1] : []
         content {
