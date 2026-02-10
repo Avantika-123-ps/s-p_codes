@@ -12,7 +12,7 @@ locals {
     content_match            = try(c.content_match, "") != "" ? c.content_match : ""
     content_matcher          = try(c.content_matcher, "") != "" ? c.content_matcher : "CONTAINS_STRING"
     regions_raw              = trimspace(try(c.regions, ""))
-    regions                  = try(c.regions, "") != "" && lower(trimspace(c.regions)) != "global" ? [trimspace(c.regions)] : null
+    regions                  = try(local.region_map[trimspace(try(c.regions, ""))], try(split(",", trimspace(c.regions)), null))
     request_method           = try(c.request_method, "") != "" ? c.request_method : "GET"
     acceptable_response_code = try(c.acceptable_response_code, "") != "" ? tonumber(c.acceptable_response_code) : null
     log_check_failures       = try(c.log_check_failures, "") != "" ? tobool(c.log_check_failures) : false
