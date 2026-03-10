@@ -67,4 +67,5 @@ resource "google_monitoring_notification_channel" "webhooks" {
   sensitive_labels {
     password = each.value.secret_name != "" ? split(":", data.google_secret_manager_secret_version.webhook_credentials[each.key].secret_data)[1] : ""
   }
+  
 }
