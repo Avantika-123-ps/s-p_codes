@@ -1,0 +1,7 @@
+type,name,email,url,username,secret_name
+email,,deepak.kumar3@spglobal.com,,,
+email,,neelisetty.chandana@spglobal.com,,,
+email,,anil.karri@spglobal.com,,,
+email,,kambampati.padmini@spglobal.com,,,
+email,,nagendra.budipiti@spglobal.com,,,
+webhook,Moogsoft_QA,,https://sp.moogsoft.qa/integrations/api/v1/events/gcp_n_obserability,moogsoft_qa,projects/411604666180/secrets/Webhook_moogsoft_qa
