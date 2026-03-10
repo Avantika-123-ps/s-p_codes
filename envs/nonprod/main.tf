@@ -45,3 +45,10 @@ module "alert_policies" {
   csv_path       = "${path.module}/alert_policies.csv"
   moogsoft_token = "dummy-token-for-testing-alerts" # Replace in real usage
 }
+
+module "notification_channel" {
+  source = "../../modules/notification_channel"
+
+  project_id            = var.project_id
+  notifications_csv_path = "${path.module}/notifications.csv"
+}
